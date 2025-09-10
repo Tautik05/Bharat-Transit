@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import "leaflet/dist/leaflet.css";
 import UserDashboard from './pages/User';
+import DriverDashboard from "./pages/DriverDashboard";
 
 // A generic placeholder component for the different dashboards
 const Dashboard = ({ title }) => (
@@ -23,7 +24,7 @@ const Dashboard = ({ title }) => (
 
 // Specific dashboard components
 // const UserDashboard = () => <Dashboard title="User Dashboard" />;
-const DriverDashboard = () => <Dashboard title="Driver Dashboard" />;
+// const DriverDashboard = () => <Dashboard title="Driver Dashboard" />;
 const DepotDashboard = () => <Dashboard title="Depot Dashboard" />;
 const AgencyDashboard = () => <Dashboard title="Agency Dashboard" />;
 const AdminDashboard = () => <Dashboard title="Admin Dashboard" />;
@@ -77,7 +78,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/user" element={<UserDashboard />} />
-        <Route path="/driver" element={<DriverDashboard />} />
+        <Route path="/driver" element={<DriverDashboard />} />  {/* real one */}
         <Route path="/depot" element={<DepotDashboard />} />
         <Route path="/agency" element={<AgencyDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
