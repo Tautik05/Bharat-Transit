@@ -1,14 +1,17 @@
 // RecenterButton.jsx
 import React from "react";
-import { FaCrosshairs } from "react-icons/fa";
+import { MdMyLocation } from "react-icons/md"; 
 
 const RecenterButton = ({ onClick }) => (
   <button
     onClick={onClick}
-    className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition"
+    className="bg-white shadow px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-2 hover:bg-gray-100 transition"
+    aria-label="Recenter"
   >
-    <FaCrosshairs className="text-blue-500" />
+    <MdMyLocation className="text-blue-500 text-lg" />
+    Recenter
   </button>
 );
+
 
 export default RecenterButton;

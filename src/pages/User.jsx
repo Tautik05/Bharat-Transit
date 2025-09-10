@@ -8,6 +8,7 @@ import SearchBar from "../components/SearchBar";
 import MapView from "../components/MapView";
 import InfoPanel from "../components/InfoPanel";
 import BottomSheet from "../components/BottomSheet";
+import RecenterButton from "../components/RecenterButton";
 
 const UserDashboard = () => {
   const [showPopup, setShowPopup] = useState(true);
@@ -59,7 +60,7 @@ const UserDashboard = () => {
   return (
 <div className={`min-h-screen flex justify-center items-start py-10 ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-200"}`}>
   {/* Mobile frame container */}
-  <div className={`bg-white w-full max-w-sm rounded-3xl shadow-xl overflow-hidden flex flex-col min-h-screen ${theme === "dark" ? "bg-gray-800 text-white" : ""}`}>
+  <div className={`bg-white w-full md:max-w-sm sm:max-w-full shadow-xl overflow-hidden flex flex-col min-h-screen ${theme === "dark" ? "bg-gray-800 text-white" : ""}`}>
     
     {/* Location Popup always on reload */}
     {showPopup && (
@@ -71,7 +72,7 @@ const UserDashboard = () => {
 
     {/* Fixed Header */}
 {!showPopup && (
-  <div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-sm bg-white rounded-t-3xl flex items-center justify-between px-4 h-[60px]">
+  <div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-sm bg-white flex items-center justify-between px-4 h-[60px]">
     <Header onThemeChange={handleThemeChange} />
   </div>
 )}
@@ -83,38 +84,41 @@ const UserDashboard = () => {
     {/* Spacer for header + search */}
     <div className="h-[95px]" />
 
-    {/* Scrollable content */}
-    <div
-      className="flex-1 overflow-y-auto"
-      onScroll={(e) => setScrollY(e.target.scrollTop)}
-    >
-      {/* Map */}
-      <div
-        className="transition-all duration-300 ease-in-out rounded-b-3xl overflow-hidden relative"
-        style={{ height: `${Math.max(0, 300 - scrollY)}px` }}
-      >
-        <MapView selectedBus={selectedBus} center={mapCenter} setCenter={setMapCenter} />
+{/* Scrollable content */}
+<div
+  className="flex-1 overflow-y-auto"
+  onScroll={(e) => setScrollY(e.target.scrollTop)}
+>
+  {/* Map */}
+  <div
+    className="transition-all duration-300 ease-in-out rounded-b-3xl overflow-hidden relative"
+    style={{ height: `${Math.max(0, 300 - scrollY)}px` }}
+  >
+    <MapView
+      selectedBus={selectedBus}
+      center={mapCenter}
+      setCenter={setMapCenter}
+    />
 
-        {/* Recenter Button floating over the map, bottom center, hides on scroll */}
-        {scrollY < 100 && (
-          <button
-            className="absolute bottom-4 right-4 z-40 bg-white shadow px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-2 hover:bg-gray-100 transition"
-            onClick={handleRecenter}
-            aria-label="Recenter"
-          >
-            <MdMyLocation className="text-blue-500 text-lg" />
-            Recenter
-          </button>
-        )}
+    {/* Recenter Button floating over the map */}
+    {scrollY < 100 && (
+      <div className="absolute bottom-4 right-4 z-20">
+        <RecenterButton onClick={handleRecenter} />
       </div>
-
-      {/* Bottom Sheet */}
-      <BottomSheet scrollProgress={scrollY} onBusSelect={handleBusSelection} />
-
-      {/* Extra spacing */}
-      <div className="h-10" />
-    </div>
+    )}
   </div>
+
+  {/* Bottom Sheet full height */}
+  <div className="flex-1 min-h-[calc(100vh-95px)]">
+    <BottomSheet
+        selectedBus={selectedBus}
+        // onBusSelect={handleBusSelect}
+      scrollProgress={scrollY}
+      onBusSelect={handleBusSelection}
+    />
+  </div>
+</div>
+</div>
 </div>
 
   );
