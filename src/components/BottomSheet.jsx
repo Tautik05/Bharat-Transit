@@ -1,46 +1,58 @@
-import React, { useState } from "react";
+import React from "react";
 import { FaBus } from "react-icons/fa";
-import { motion } from "framer-motion";
 
 const popularBuses = [
   { id: 1, name: "Route 101: Metro Center to Downtown" },
   { id: 2, name: "Route 202: North Park to South Bay" },
-  { id: 3, name: "Route 404: Airport Express" },
+  { id: 3, name: "Route 303: East Village to West End" },
+  { id: 4, name: "Route 404: Airport Express" },
 ];
 
-const BottomSheet = ({ onBusSelect }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
+const BottomSheet = ({ onBusSelect, theme }) => {
   return (
-    <motion.div
-      initial={{ y: "60%" }}
-      animate={{ y: isExpanded ? "20%" : "60%" }}
-      transition={{ type: "spring", stiffness: 100 }}
-      className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-xl p-4 z-30 max-w-md mx-auto"
+    <div
+      className="
+        bg-white
+        rounded-t-3xl
+        shadow-xl
+        z-10
+        text-gray-800
+        p-4
+      "
     >
-      {/* Handle Bar */}
-      <div
-        className="w-12 h-1.5 bg-gray-400 rounded-full mx-auto mb-3 cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
-      ></div>
+      {/* Handle */}
+      <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-3" />
 
-      <h2 className="text-lg font-semibold text-gray-800 mb-2">
-        🔥 Popular Searches
-      </h2>
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">
+        🔥 Popular / Recent
+      </h3>
 
-      <ul>
+      <div className="space-y-3">
         {popularBuses.map((bus) => (
-          <li
+          <button
             key={bus.id}
             onClick={() => onBusSelect(bus)}
-            className="flex items-center p-3 hover:bg-gray-100 rounded-lg cursor-pointer"
+            className={`w-full text-left flex items-center gap-3 p-3 rounded-lg ${theme === "dark" ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"} transition`}
           >
-            <FaBus className="text-yellow-500 text-xl mr-3" />
-            {bus.name}
-          </li>
+            <FaBus className="text-yellow-500 text-xl" />
+            <div>
+              <div className="text-sm font-medium">{bus.name}</div>
+              <div className="text-xs text-gray-500">Recent • 2 mins ago</div>
+            </div>
+          </button>
         ))}
-      </ul>
-    </motion.div>
+
+        {/* filler */}
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="p-3 bg-gray-50 rounded-lg border border-gray-100"
+            >
+            Suggestion {i + 1}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
