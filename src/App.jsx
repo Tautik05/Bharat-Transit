@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import "leaflet/dist/leaflet.css";
+import UserDashboard from './pages/User';
 
 // A generic placeholder component for the different dashboards
 const Dashboard = ({ title }) => (
@@ -20,7 +22,7 @@ const Dashboard = ({ title }) => (
 );
 
 // Specific dashboard components
-const UserDashboard = () => <Dashboard title="User Dashboard" />;
+// const UserDashboard = () => <Dashboard title="User Dashboard" />;
 const DriverDashboard = () => <Dashboard title="Driver Dashboard" />;
 const DepotDashboard = () => <Dashboard title="Depot Dashboard" />;
 const AgencyDashboard = () => <Dashboard title="Agency Dashboard" />;
