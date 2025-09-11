@@ -41,7 +41,7 @@ const FitRouteBounds = ({ positions }) => {
   return null;
 };
 
-const MapView = ({ selectedBus, center }) => {
+const MapView = ({ selectedBus, center, theme = 'light' }) => {
   const userPosition = [22.5726, 88.3639]; // default user location
   const defaultCenter = center || userPosition;
 
@@ -57,13 +57,18 @@ const MapView = ({ selectedBus, center }) => {
   // Bounds for route mode
   const routePositions = route ? [route.start, route.busPos, route.end] : [];
 
+  const lightThemeUrl = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+  const darkThemeUrl = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+  const mapUrl = theme === 'dark' ? darkThemeUrl : lightThemeUrl;
+
   return (
     <div className="w-full h-full relative rounded-lg shadow-inner overflow-hidden z-0">
-      <MapContainer center={defaultCenter} zoom={14} className="w-full h-full" zoomControl={false} scrollWheelZoom={false} >
-        <TileLayer
-          attribution="&copy; OpenStreetMap"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+      <MapContainer center={defaultCenter} zoom={14} className="w-full h-full" zoomControl={false} scrollWheelZoom={false} attributionControl={false} >
+<TileLayer
+  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
+  url={mapUrl}
+/>
+
 
         {/* Map updater to recenter smoothly */}
         <MapUpdater center={defaultCenter} />

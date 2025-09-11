@@ -1,145 +1,102 @@
-import React, { useState, useEffect } from "react";
-import { ArrowLeft, Clock, Bell, MapPin, Bus } from "lucide-react";
-import { MdDirectionsBus } from "react-icons/md";
+import React, { useState } from 'react';
+import { ArrowLeft, Bell, Clock, MapPin, Phone } from 'lucide-react';
 
-const BusDetails = ({ bus, onSubscribe, onBack }) => {
-  const [notifyBefore, setNotifyBefore] = useState(15);
-  const [etaMinutes, setEtaMinutes] = useState(null);
+const BusDetails = ({ bus, onBack, onSubscribe, theme = 'light' }) => {
+  const darkMode = theme === 'dark';
+  const [phone, setPhone] = useState('');
 
-  // Calculate ETA based on bus times
-  useEffect(() => {
-    if (bus?.startTime && bus?.eta) {
-      const parseTime = (t) => {
-        const [time, period] = t.split(" ");
-        let [hours, minutes] = time.split(":").map(Number);
-        if (period === "PM" && hours !== 12) hours += 12;
-        if (period === "AM" && hours === 12) hours = 0;
-        return hours * 60 + minutes;
-      };
-
-      const start = parseTime(bus.startTime);
-      const end = parseTime(bus.eta);
-      setEtaMinutes(end - start);
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (phone.length === 10) {
+      onSubscribe({ busId: bus.id, phone });
+      // Maybe show a success message
     }
-  }, [bus]);
-
-  if (!bus) return null;
-
-  const getETAColor = () => {
-    if (!etaMinutes) return "text-gray-400";
-    if (etaMinutes < 20) return "text-green-500";
-    if (etaMinutes < 40) return "text-orange-500";
-    return "text-red-500";
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      {/* Header */}
-      <div className="bg-white px-4 py-3 flex items-center gap-3">
-        <button onClick={onBack} className="p-1">
-          <ArrowLeft className="w-5 h-5" />
+    <div className="p-4">
+      {/* Back Button and Bus Name */}
+      <div className="flex items-center mb-6">
+        <button
+          onClick={onBack}
+          className={`p-2 rounded-full mr-3 transition-colors ${darkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
+          aria-label="Go back"
+        >
+          <ArrowLeft size={24} className={darkMode ? 'text-white' : 'text-black'} />
         </button>
-        <h1 className="text-lg font-medium">Bus Details</h1>
+        <div>
+          <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-black'}`}>{bus.name}</h2>
+          <p className={`text-sm ${darkMode ? 'text-zinc-400' : 'text-gray-500'}`}>{bus.vehicle}</p>
+        </div>
       </div>
 
-      <div className="p-4 space-y-4">
-        {/* Main Info Card */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <MdDirectionsBus className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="font-semibold text-lg">{bus.name}</h2>
-                <p className="text-sm text-gray-500">{bus.vehicle}</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-gray-400 mb-1">ETA</p>
-              <p className={`text-2xl font-bold ${getETAColor()}`}>
-                {etaMinutes ? `${etaMinutes}m` : "—"}
-              </p>
-            </div>
+      {/* Route Info & ETA Card -- Redesigned */}
+      <div className="flex justify-between items-center mb-6">
+        {/* Left side: Route details */}
+        <div className="space-y-2">
+          <div className="flex items-center">
+            <MapPin size={18} className="mr-3 text-blue-500 flex-shrink-0" />
+            <p className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{bus.start.join(', ')}</p>
           </div>
-          
-          {/* Route */}
-          <div className="flex items-center gap-2 text-sm ">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-gray-700">{bus.start?.join(", ")}</span>
+          <div className="pl-1">
+            <div className={`h-5 border-l-2 border-dotted ml-[8px] ${darkMode ? 'border-zinc-600' : 'border-gray-300'}`}></div>
           </div>
-          <div className="w-px h-4 bg-gray-300 ml-1 my-1"></div>
-          <div className="flex items-center gap-2 text-sm">
-            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-            <span className="text-gray-700">{bus.end?.join(", ")}</span>
+          <div className="flex items-center">
+            <MapPin size={18} className="mr-3 text-red-500 flex-shrink-0" />
+            <p className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{bus.end.join(', ')}</p>
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-3 ">
-          <div className="bg-white rounded-lg p-3 text-center shadow-sm">
-            <Clock className="w-4 h-4 text-gray-400 mx-auto mb-1" />
-            <p className="text-xs text-gray-500">Departure</p>
-            <p className="font-medium text-sm">{bus.startTime || "—"}</p>
-          </div>
-          <div className="bg-white rounded-lg p-3 text-center shadow-sm">
-            <MapPin className="w-4 h-4 text-gray-400 mx-auto mb-1" />
-            <p className="text-xs text-gray-500">Expected At</p>
-            <p className="font-medium text-sm">{bus.eta || "—"}</p>
-          </div>
+        {/* Right side: ETA Card */}
+        <div className={`flex-shrink-0 text-center p-4 rounded-2xl w-28 ${darkMode ? 'bg-zinc-800' : 'bg-gray-100'}`}>
+          <p className={`text-4xl font-bold tracking-tighter ${darkMode ? 'text-white' : 'text-black'}`}>{bus.duration}</p>
+          <p className={`text-base font-medium -mt-1 ${darkMode ? 'text-zinc-400' : 'text-gray-500'}`}>min</p>
+          <p className={`text-xs mt-2 px-2 py-0.5 rounded-full ${darkMode ? 'bg-zinc-700 text-zinc-300' : 'bg-gray-200 text-gray-600'}`}>
+            ETA {bus.eta}
+          </p>
         </div>
+      </div>
 
-        {/* Notification */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <Bell className="w-4 h-4 text-gray-600" />
-            <h3 className="font-medium">Get SMS Alert</h3>
-          </div>
-          
-          <p className="text-sm text-gray-500 mb-3">Notify me before bus arrives</p>
-          
-          <div className="flex gap-2 mb-4">
-            {[15, 30, 60].map((minutes) => (
-              <button
-                key={minutes}
-                onClick={() => setNotifyBefore(minutes)}
-                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition ${
-                  notifyBefore === minutes
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                {minutes}m
-              </button>
-            ))}
-          </div>
+      {/* Start Time */}
+      <div className={`flex items-center p-4 rounded-xl border mb-8 ${darkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-gray-50 border-gray-200'}`}>
+        <Clock size={20} className="mr-3 text-green-500 flex-shrink-0" />
+        <p className={`${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          Started at <span className="font-semibold">{bus.startTime}</span> from <span className="font-semibold">{bus.start[0]}</span>
+        </p>
+      </div>
 
+      {/* SMS Subscription */}
+      <div className={`p-4 rounded-xl border ${darkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-gray-50 border-gray-200'}`}>
+        <div className="flex items-center mb-3">
+          <Bell size={20} className="mr-3 text-yellow-500" />
+          <h3 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-black'}`}>Get Live Updates</h3>
+        </div>
+        <p className={`text-sm mb-4 ${darkMode ? 'text-zinc-400' : 'text-gray-600'}`}>
+          Enter your phone number to receive SMS alerts for this bus.
+        </p>
+        <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-grow">
+            <Phone size={18} className={`absolute left-3 top-1/2 -translate-y-1/2 ${darkMode ? 'text-zinc-400' : 'text-gray-400'}`} />
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+              placeholder="10-digit mobile number"
+              className={`w-full rounded-lg py-2.5 pl-10 pr-3 border transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                darkMode
+                  ? 'bg-zinc-700 border-zinc-600 text-white placeholder:text-zinc-400'
+                  : 'bg-white border-gray-300'
+              }`}
+            />
+          </div>
           <button
-            onClick={() => onSubscribe({ type: "one-time", minutes: notifyBefore })}
-            className="w-full bg-blue-600 text-white font-medium py-3 rounded-lg hover:bg-blue-700 transition"
+            type="submit"
+            className="px-4 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={phone.length !== 10}
           >
-            Subscribe to Alerts
+            Subscribe
           </button>
-        </div>
-
-        {/* Additional Info */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
-          <h3 className="font-medium mb-3">Additional Information</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Route Type</span>
-              <span>Express</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Frequency</span>
-              <span>Every 15-20 min</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Fare</span>
-              <span>₹25-40</span>
-            </div>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
   );
