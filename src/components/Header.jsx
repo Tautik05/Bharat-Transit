@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { UserCircle, Sun, Moon, LogOut } from "lucide-react";
+import BharatTransitLogo from "./Logo";
 
 const Header = ({ onThemeChange, theme = "light" }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -34,9 +35,7 @@ const Header = ({ onThemeChange, theme = "light" }) => {
 
   return (
     <div className="flex items-center justify-between w-full">
-      <h1 className={`text-2xl font-bold tracking-tight ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-        Bharat Transit
-      </h1>
+      <BharatTransitLogo size="md" theme={theme} />
       
       <div className="relative">
         <button

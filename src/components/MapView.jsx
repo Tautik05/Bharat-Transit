@@ -16,6 +16,13 @@ const userIcon = new L.DivIcon({
   className: "custom-user-icon",
 });
 
+// Stop icon (smaller gray dot)
+const stopIcon = new L.DivIcon({
+  html: `<div style="width:8px; height:8px; background-color:#888; border-radius:50%; border:1px solid white;"></div>`,
+  iconSize: [8, 8],
+  className: "custom-stop-icon",
+});
+
 // Hardcoded arbitrary buses
 const arbitraryBuses = [
   { name: "41B", position: [22.575, 88.365] },
@@ -51,11 +58,17 @@ const MapView = ({ selectedBus, center, theme = 'light' }) => {
         start: [22.551, 88.35], // starting point
         end: [22.58, 88.37],    // ending point
         busPos: [22.565, 88.36], // bus current location
+        stops: [
+          [22.555, 88.353],
+          [22.560, 88.356],
+          [22.568, 88.362],
+          [22.575, 88.368],
+        ]
       }
     : null;
 
   // Bounds for route mode
-  const routePositions = route ? [route.start, route.busPos, route.end] : [];
+  const routePositions = route ? [route.start, route.busPos, ...route.stops, route.end] : [];
 
   const lightThemeUrl = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
   const darkThemeUrl = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
@@ -111,9 +124,16 @@ const MapView = ({ selectedBus, center, theme = 'light' }) => {
               <Popup>End: {selectedBus.name} Route</Popup>
             </Marker>
 
+            {/* Bus stops */}
+            {route.stops.map((stop, idx) => (
+              <Marker key={`stop-${idx}`} position={stop} icon={stopIcon}>
+                <Popup>Bus Stop</Popup>
+              </Marker>
+            ))}
+
             {/* Route line */}
             <Polyline
-              positions={[route.start, route.busPos, route.end]}
+              positions={[route.start, ...route.stops, route.end]}
               pathOptions={{ color: "blue", dashArray: "6 6" }}
             />
           </>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Bell, Clock, MapPin, Phone } from 'lucide-react';
+import { ArrowLeft, Bell, Clock, MapPin, Phone, User } from 'lucide-react';
 
 const BusDetails = ({ bus, onBack, onSubscribe, theme = 'light' }) => {
   const darkMode = theme === 'dark';
@@ -57,11 +57,23 @@ const BusDetails = ({ bus, onBack, onSubscribe, theme = 'light' }) => {
         </div>
       </div>
 
+      {/* Nearest Stop Info Card */}
+      <div className={`flex items-center p-3 rounded-xl border mb-4 transition-colors duration-300 ${darkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-gray-50 border-gray-200'}`}>
+        <User size={20} className="mr-3 text-cyan-500 flex-shrink-0" />
+        <div className="flex-grow">
+          <p className={`text-xs ${darkMode ? 'text-zinc-400' : 'text-gray-500'}`}>Nearest stop to you</p>
+          <p className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>Science City</p>
+        </div>
+        <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+          550 m
+        </p>
+      </div>
+
       {/* Start Time */}
       <div className={`flex items-center p-4 rounded-xl border mb-8 ${darkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-gray-50 border-gray-200'}`}>
         <Clock size={20} className="mr-3 text-green-500 flex-shrink-0" />
         <p className={`${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-          Started at <span className="font-semibold">{bus.startTime}</span> from <span className="font-semibold">{bus.start[0]}</span>
+          Started at <span className="font-semibold">{bus.startTime}</span> from <span className="font-semibold">{bus.start.join(', ')}</span>
         </p>
       </div>
 
@@ -74,7 +86,7 @@ const BusDetails = ({ bus, onBack, onSubscribe, theme = 'light' }) => {
         <p className={`text-sm mb-4 ${darkMode ? 'text-zinc-400' : 'text-gray-600'}`}>
           Enter your phone number to receive SMS alerts for this bus.
         </p>
-        <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
+        <div onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-grow">
             <Phone size={18} className={`absolute left-3 top-1/2 -translate-y-1/2 ${darkMode ? 'text-zinc-400' : 'text-gray-400'}`} />
             <input
@@ -90,13 +102,13 @@ const BusDetails = ({ bus, onBack, onSubscribe, theme = 'light' }) => {
             />
           </div>
           <button
-            type="submit"
+            onClick={handleSubscribe}
             className="px-4 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={phone.length !== 10}
           >
             Subscribe
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
