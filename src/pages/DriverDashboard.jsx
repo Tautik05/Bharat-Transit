@@ -1,6 +1,6 @@
 import { useState } from "react";
 import LocationPopup from "../components/LocationPopup";
-import Header from "../components/Head";
+import Head from "../components/Head";
 import Map from "../components/Map";
 import RouteInfo from "../components/RouteInfo";
 
@@ -41,7 +41,7 @@ export default function DriverDashboard() {
         <LocationPopup onAllow={handleAllow} onDeny={handleDeny} />
       )}
 
-      <Header 
+      <Head 
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}
         isDriverActive={isDriverActive}
