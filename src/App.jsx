@@ -4,6 +4,9 @@ import "leaflet/dist/leaflet.css";
 import UserDashboard from './pages/User';
 import DriverDashboard from "./pages/DriverDashboard";
 import AgencyDashboard from "./pages/Agency";
+import DepotDashboard from "./pages/BusDepot";
+
+
 
 // A generic placeholder component for the different dashboards
 const Dashboard = ({ title }) => (
@@ -26,7 +29,7 @@ const Dashboard = ({ title }) => (
 // Specific dashboard components
 // const UserDashboard = () => <Dashboard title="User Dashboard" />;
 // const DriverDashboard = () => <Dashboard title="Driver Dashboard" />;
-const DepotDashboard = () => <Dashboard title="Depot Dashboard" />;
+// const DepotDashboard = () => <Dashboard title="Depot Dashboard" />;
 // const AgencyDashboard = () => <Dashboard title="Agency Dashboard" />;
 const AdminDashboard = () => <Dashboard title="Admin Dashboard" />;
 
