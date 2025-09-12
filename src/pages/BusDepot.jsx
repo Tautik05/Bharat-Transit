@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   Home, Building2, Bus, MapPin, Users, Settings, 
   Plus, Bell, Menu, X, Clock, Route,
@@ -7,12 +7,14 @@ import {
 import BharatTransitLogo from "../components/Logo.jsx";
 
 
-const BharatTransitDashboard = () => {
+const BusDepot = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [darkMode, setDarkMode] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [newRoute, setNewRoute] = useState("");
+  const [routes, setRoutes] = useState([]);
 
   // Sample Data
   const [agencies, setAgencies] = useState([
@@ -95,8 +97,10 @@ const BharatTransitDashboard = () => {
     contact: '',
     phone: '',
     totalBuses: '',
-    routes: ''
+    routes: []
   });
+
+  const [routeInput, setRouteInput] = useState('');
 
   // Update time
   useEffect(() => {
@@ -115,6 +119,29 @@ const BharatTransitDashboard = () => {
     }
   }, [showProfile]);
 
+  const handleRouteChange = (e) => {
+    setRouteInput(e.target.value);
+  };
+
+  const handleRouteKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const newRoute = routeInput.trim();
+      if (newRoute && !newAgency.routes.includes(newRoute)) {
+        setNewAgency({ ...newAgency, routes: [...newAgency.routes, newRoute] });
+      }
+      setRouteInput('');
+    }
+  };
+
+const removeRoute = (route) => {
+  setNewAgency(prev => ({
+    ...prev,
+    routes: prev.routes.filter(r => r !== route),
+  }));
+};
+
+
   const addAgency = () => {
     if (newAgency.name && newAgency.contact && newAgency.phone) {
       const agency = {
@@ -125,10 +152,11 @@ const BharatTransitDashboard = () => {
         totalBuses: parseInt(newAgency.totalBuses) || 0,
         activeBuses: parseInt(newAgency.totalBuses) || 0,
         maintenanceBuses: 0,
-        routes: newAgency.routes.split(',').map(r => r.trim()).filter(r => r)
+        routes: newAgency.routes.filter(r => r)
       };
       setAgencies([...agencies, agency]);
-      setNewAgency({ name: '', contact: '', phone: '', totalBuses: '', routes: '' });
+      setNewAgency({ name: '', contact: '', phone: '', totalBuses: '', routes: [] });
+      setRouteInput('');
     }
   };
 
@@ -536,7 +564,7 @@ const BharatTransitDashboard = () => {
   );
 
   const AddAgencyPage = () => (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto" >
       <div className={`${darkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white'} rounded-xl p-8 shadow-sm border`}>
         <h3 className="text-xl font-semibold mb-6">Add New Agency</h3>
         
@@ -549,7 +577,7 @@ const BharatTransitDashboard = () => {
               type="text"
               value={newAgency.name}
               onChange={(e) => setNewAgency({...newAgency, name: e.target.value})}
-              className={`w-full border ${darkMode ? 'bg-zinc-700 border-zinc-600 text-white' : 'border-gray-300'} rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+              className={`w-full border ${darkMode ? 'bg-zinc-700 border-zinc-600 text-white placeholder:text-zinc-400' : 'border-gray-300'} rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               placeholder="Enter agency name"
             />
           </div>
@@ -562,7 +590,7 @@ const BharatTransitDashboard = () => {
               type="text"
               value={newAgency.contact}
               onChange={(e) => setNewAgency({...newAgency, contact: e.target.value})}
-              className={`w-full border ${darkMode ? 'bg-zinc-700 border-zinc-600 text-white' : 'border-gray-300'} rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+              className={`w-full border ${darkMode ? 'bg-zinc-700 border-zinc-600 text-white placeholder:text-zinc-400' : 'border-gray-300'} rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               placeholder="Enter contact person name"
             />
           </div>
@@ -575,7 +603,7 @@ const BharatTransitDashboard = () => {
               type="tel"
               value={newAgency.phone}
               onChange={(e) => setNewAgency({...newAgency, phone: e.target.value})}
-              className={`w-full border ${darkMode ? 'bg-zinc-700 border-zinc-600 text-white' : 'border-gray-300'} rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+              className={`w-full border ${darkMode ? 'bg-zinc-700 border-zinc-600 text-white placeholder:text-zinc-400' : 'border-gray-300'} rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               placeholder="+91 XXXXX XXXXX"
             />
           </div>
@@ -588,34 +616,83 @@ const BharatTransitDashboard = () => {
               type="number"
               value={newAgency.totalBuses}
               onChange={(e) => setNewAgency({...newAgency, totalBuses: e.target.value})}
-              className={`w-full border ${darkMode ? 'bg-zinc-700 border-zinc-600 text-white' : 'border-gray-300'} rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+              className={`w-full border ${darkMode ? 'bg-zinc-700 border-zinc-600 text-white placeholder:text-zinc-400' : 'border-gray-300'} rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors`}
               placeholder="Enter total buses"
             />
           </div>
 
           <div>
-            <label className={`block text-sm font-medium ${darkMode ? 'text-zinc-300' : 'text-gray-700'} mb-2`}>
-              Routes (comma separated)
-            </label>
-            <input
-              type="text"
-              value={newAgency.routes}
-              onChange={(e) => setNewAgency({...newAgency, routes: e.target.value})}
-              className={`w-full border ${darkMode ? 'bg-zinc-700 border-zinc-600 text-white' : 'border-gray-300'} rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-              placeholder="Route 1, Route 2, Route 3"
-            />
-          </div>
+  <label className={`block text-sm font-medium ${darkMode ? 'text-zinc-300' : 'text-gray-700'} mb-2`}>
+    Agency Routes
+  </label>
+  
+  <div className="space-y-4">
+    {newAgency.routes.map((route, index) => (
+      <div key={index} className="flex items-center gap-3 relative">
+        {/* Vertical Line for route visualization */}
+        {index > 0 && (
+          <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-blue-300"></div>
+        )}
+        
+        {/* Stop Icon */}
+        <div className="w-4 h-4 rounded-full bg-blue-500 z-10"></div>
+        
+        {/* Route Name */}
+        <span className={`flex-1 px-3 py-2 rounded-lg ${darkMode ? 'bg-zinc-700 text-white' : 'bg-gray-100 text-gray-800'}`}>
+          {route}
+        </span>
+        
+        {/* Remove */}
+        <button 
+          onClick={() => removeRoute(route)}
+          className="text-red-500 hover:text-red-700"
+        >
+          ✕
+        </button>
+      </div>
+    ))}
+
+    {/* Add New Stop */}
+    <div className="flex items-center gap-3">
+      <div className="w-4 h-4 rounded-full border-2 border-dashed border-blue-400"></div>
+      <input
+        type="text"
+        value={routeInput}
+        onChange={(e) => setRouteInput(e.target.value)}
+        onKeyDown={handleRouteKeyDown}
+        placeholder="Add a stop/route name"
+        className={`flex-1 border rounded-lg px-3 py-2 ${darkMode ? 'bg-zinc-700 border-zinc-600 text-white' : 'bg-white border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+      />
+      <button 
+  onClick={() => {
+    if (routeInput.trim()) {
+      setNewAgency(prev => ({
+        ...prev,
+        routes: [...prev.routes, routeInput.trim()],
+      }));
+      setRouteInput('');
+    }
+  }}
+  className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition"
+>
+  <Plus className="w-4 h-4" />
+</button>
+
+    </div>
+  </div>
+</div>
+
 
           <div className="flex gap-4 pt-4">
             <button
               onClick={addAgency}
-              className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium"
             >
               Add Agency
             </button>
             <button
               onClick={() => setCurrentPage('agencies')}
-              className={`flex-1 ${darkMode ? 'bg-zinc-700 text-zinc-100 hover:bg-zinc-600' : 'bg-gray-300 text-gray-700 hover:bg-gray-400'} py-3 rounded-lg transition-colors font-medium`}
+              className={`flex-1 ${darkMode ? 'bg-zinc-700 text-zinc-100 hover:bg-zinc-600' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'} py-2.5 rounded-lg transition-colors font-medium`}
             >
               Cancel
             </button>
@@ -705,4 +782,4 @@ const BharatTransitDashboard = () => {
   );
 };
 
-export default BharatTransitDashboard;
+export default BusDepot;
