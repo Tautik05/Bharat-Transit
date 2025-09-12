@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import "leaflet/dist/leaflet.css";
 import UserDashboard from './pages/User';
 import DriverDashboard from "./pages/DriverDashboard";
+import AgencyDashboard from "./pages/Agency";
 
 // A generic placeholder component for the different dashboards
 const Dashboard = ({ title }) => (
@@ -26,7 +27,7 @@ const Dashboard = ({ title }) => (
 // const UserDashboard = () => <Dashboard title="User Dashboard" />;
 // const DriverDashboard = () => <Dashboard title="Driver Dashboard" />;
 const DepotDashboard = () => <Dashboard title="Depot Dashboard" />;
-const AgencyDashboard = () => <Dashboard title="Agency Dashboard" />;
+// const AgencyDashboard = () => <Dashboard title="Agency Dashboard" />;
 const AdminDashboard = () => <Dashboard title="Admin Dashboard" />;
 
 // The main landing page component
