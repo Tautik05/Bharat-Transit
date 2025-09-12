@@ -1,12 +1,12 @@
 import ProfileDropdown from "./ProfileDropdown";
 
-export default function Header({ 
+export default function Head({ 
   isDarkMode, setIsDarkMode, 
   isDriverActive, setIsDriverActive, 
   showProfile, setShowProfile 
 }) {
   return (
-    <header className={`px-4 py-3 flex justify-between items-center shadow-lg sticky top-0 z-[9999] ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-emerald-600 text-white'}`}>
+    <head className={`px-4 py-3 flex justify-between items-center shadow-lg sticky top-0 z-[9999] ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-emerald-600 text-white'}`}>
       <div className="flex items-center gap-2">
         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isDarkMode ? 'bg-gray-700' : 'bg-emerald-700'}`}>
           🚌
@@ -34,6 +34,6 @@ export default function Header({
           />
         )}
       </div>
-    </header>
+    </head>
   );
 }
