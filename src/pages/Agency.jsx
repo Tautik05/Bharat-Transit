@@ -25,16 +25,16 @@ export default function AgencyDashboard() {
   }, [showProfile]);
 
   return (
-    <div className={`max-w-sm mx-auto min-h-screen transition-colors ${
+    <div className={`w-full min-h-screen transition-colors ${
       darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
     }`}>
       {/* Header */}
-      <header className={`flex items-center justify-between p-3 shadow relative transition-colors ${
+      <header className={`sticky top-0 z-50 flex items-center justify-between p-3 lg:p-6 shadow transition-colors ${
         darkMode ? 'bg-gray-800' : 'bg-white'
       }`}>
         <div className="flex items-center">
           <BharatTransitLogo size="sm" theme={darkMode ? 'dark' : 'light'} />
-          <span className={`ml-2 text-xs font-medium ${
+          <span className={`ml-2 text-xs lg:text-sm font-medium ${
             darkMode ? 'text-gray-300' : 'text-gray-600'
           }`}>Agency</span>
         </div>
@@ -46,7 +46,7 @@ export default function AgencyDashboard() {
             <User className="w-4 h-4 text-white" />
           </button>
           {showProfile && (
-            <div className={`absolute right-0 top-8 rounded-lg shadow-lg border p-2 w-40 z-10 transition-colors ${
+            <div className={`absolute right-0 top-8 rounded-lg shadow-lg border p-2 w-40 z-[60] transition-colors ${
               darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'
             }`}>
               <div className={`flex items-center justify-between p-2 rounded transition-colors ${
@@ -79,7 +79,7 @@ export default function AgencyDashboard() {
       </header>
 
       {/* Map Section */}
-      <div className="relative w-full h-48 overflow-hidden">
+      <div className="relative w-full h-48 lg:h-96 overflow-hidden">
         <iframe
           src="https://www.openstreetmap.org/export/embed.html?bbox=88.2000%2C22.4500%2C88.4500%2C22.7000&layer=mapnik"
           className="w-full h-full border-0"
@@ -88,24 +88,37 @@ export default function AgencyDashboard() {
         
         {/* Bus Icons Overlay */}
         {activeBuses.map((bus, idx) => {
-          // Convert lat/lng to pixel position (approximate for this bbox)
-          const x = ((bus.lng - 88.2000) / (88.4500 - 88.2000)) * 100;
-          const y = ((22.7000 - bus.lat) / (22.7000 - 22.4500)) * 100;
+          // Map bounds for the embedded map
+          const mapBounds = {
+            west: 88.2000,
+            east: 88.4500,
+            north: 22.7000,
+            south: 22.4500
+          };
+          
+          // More precise coordinate mapping
+          const x = Math.max(0, Math.min(100, ((bus.lng - mapBounds.west) / (mapBounds.east - mapBounds.west)) * 100));
+          const y = Math.max(0, Math.min(100, ((mapBounds.north - bus.lat) / (mapBounds.north - mapBounds.south)) * 100));
           
           return (
             <div
-              key={idx}
-              className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-              style={{ left: `${x}%`, top: `${y}%` }}
-              title={`${bus.id} - ${bus.route}`}
+              key={bus.id}
+              className="absolute pointer-events-none"
+              style={{ 
+                left: `calc(${x}% - 12px)`, 
+                top: `calc(${y}% - 12px)`,
+                transform: 'none'
+              }}
             >
-              <img 
-                src={busIcon} 
-                alt="Bus" 
-                className="w-6 h-6 drop-shadow-lg hover:scale-110 transition-transform"
-              />
-              <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/75 text-white text-xs px-1 rounded whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity">
-                {bus.id}
+              <div className="relative pointer-events-auto cursor-pointer" title={`${bus.id} - ${bus.route}`}>
+                <img 
+                  src={busIcon} 
+                  alt="Bus" 
+                  className="w-6 h-6 drop-shadow-lg hover:scale-110 transition-transform"
+                />
+                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/75 text-white text-xs px-1 rounded whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity z-10">
+                  {bus.id}
+                </div>
               </div>
             </div>
           );
@@ -124,7 +137,7 @@ export default function AgencyDashboard() {
       </div>
 
       {/* Actions */}
-      <div className="grid grid-cols-2 gap-3 p-3">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 lg:gap-6 p-3 lg:p-6">
         <ActionCard darkMode={darkMode} icon={<UserPlus className="w-6 h-6 text-blue-600" />} title="Assign Drivers" />
         <ActionCard darkMode={darkMode} icon={<PlusCircle className="w-6 h-6 text-green-600" />} title="Add Vehicles" />
         <ActionCard darkMode={darkMode} icon={<Bus className="w-6 h-6 text-purple-600" />} title="Manage Buses" />
@@ -133,21 +146,21 @@ export default function AgencyDashboard() {
       </div>
 
       {/* Assigned Buses List */}
-      <section className="p-3">
-        <h2 className="text-sm font-semibold mb-2">Assigned Buses</h2>
-        <div className="space-y-2">
+      <section className="p-3 lg:p-6">
+        <h2 className="text-sm lg:text-base font-semibold mb-2 lg:mb-4">Assigned Buses</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 lg:gap-4">
           {assignedBuses.map((bus, idx) => (
-            <div key={idx} className={`p-2.5 rounded-lg shadow flex justify-between items-center transition-colors ${
+            <div key={idx} className={`p-2.5 lg:p-4 rounded-lg shadow flex justify-between items-center transition-colors ${
               darkMode ? 'bg-gray-800' : 'bg-white'
             }`}>
               <div>
-                <p className="text-xs font-bold">{bus.route}</p>
-                <p className={`text-xs ${
+                <p className="text-xs lg:text-sm font-bold">{bus.route}</p>
+                <p className={`text-xs lg:text-sm ${
                   darkMode ? 'text-gray-400' : 'text-gray-500'
                 }`}>{bus.id} • Driver: {bus.driver}</p>
               </div>
               <span
-                className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                className={`text-xs lg:text-sm font-semibold px-2 py-1 rounded-full ${
                   bus.status === "Active" 
                     ? "bg-green-100 text-green-700" 
                     : darkMode ? "bg-gray-700 text-gray-300" : "bg-gray-200 text-gray-700"
@@ -165,11 +178,11 @@ export default function AgencyDashboard() {
 
 function ActionCard({ icon, title, darkMode }) {
   return (
-    <button className={`p-3 rounded-lg shadow flex flex-col items-center justify-center text-center h-20 transition-colors ${
+    <button className={`p-3 lg:p-4 rounded-lg shadow flex flex-col items-center justify-center text-center h-20 lg:h-24 transition-colors ${
       darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
     }`}>
       {icon}
-      <span className="mt-1 text-xs font-medium">{title}</span>
+      <span className="mt-1 text-xs lg:text-sm font-medium">{title}</span>
     </button>
   );
 }
