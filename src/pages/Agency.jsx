@@ -29,7 +29,7 @@ export default function AgencyDashboard() {
       darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
     }`}>
       {/* Header */}
-      <header className={`sticky top-0 z-50 flex items-center justify-between p-3 lg:p-6 shadow relative transition-colors ${
+      <header className={`sticky top-0 z-50 flex items-center justify-between p-3 lg:p-6 shadow transition-colors ${
         darkMode ? 'bg-gray-800' : 'bg-white'
       }`}>
         <div className="flex items-center">
